@@ -9,11 +9,14 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "memory-cache": "^0.2.0",
+    "moment": "^2.29.4",
     "next": "12.2.5",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
   "devDependencies": {
+    "@types/memory-cache": "^0.2.2",
     "@types/node": "18.8.3",
     "@types/react": "18.0.21",
     "@types/react-dom": "18.0.6",
