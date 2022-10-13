@@ -1,0 +1,9 @@
+version: "3"
+services:
+  mirai-api:
+    image: mirai-api
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./images:/miraiapi/images
