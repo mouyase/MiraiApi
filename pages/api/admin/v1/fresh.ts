@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import fs, { mkdirSync } from 'fs'
+import cache from '../../../../libs/cache'
+import { log } from '../../../../libs/util/log'
 
 const path = require('path').resolve('./images')
 
@@ -30,7 +32,10 @@ ${text}
 </html>
 `
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   try {
     if (fs.existsSync(path)) {
       const pathStat = fs.statSync(path)
@@ -68,6 +73,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           JSON.stringify(pathList),
           'utf-8'
         )
+        log('刷新完成')
+        await cache.set('fileIndex', pathList)
+        log('写入缓存')
         res.status(200).send(html('Fresh OK'))
       }
     } else {
