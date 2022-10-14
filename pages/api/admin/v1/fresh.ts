@@ -1,8 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import fs, { mkdirSync } from 'fs'
+import fs from 'fs'
 import cache from '../../../../libs/cache'
 import { log } from '../../../../libs/util/log'
-import { run } from 'node:test'
 import { DirectoryStructure } from '../../../../libs/common/type'
 
 const path = require('path').resolve('./images')

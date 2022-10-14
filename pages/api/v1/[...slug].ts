@@ -1,7 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import fs from 'fs'
-import random from '../../../libs/util/random'
-import getFileIndex from '../../../libs/common/getFileIndex'
 import getRandomFile from '../../../libs/common/getRandomFile'
 
 export default async function handler(

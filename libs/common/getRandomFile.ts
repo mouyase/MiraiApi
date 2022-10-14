@@ -1,9 +1,8 @@
-import cache from '../cache'
-import { log } from '../util/log'
 import fs from 'fs'
 import getFileIndex from './getFileIndex'
 import { DirectoryStructure } from './type'
 import random from '../util/random'
+import { log } from '../util/log'
 
 const getChildren = (directoryStructure: DirectoryStructure): string[] => {
   let fileList: string[] = directoryStructure.files as string[]
@@ -26,5 +25,6 @@ export default async function getRandomFile(slug: string[]) {
   })
   let fileList: string[] = getChildren(targetFileIndex)
   const imagePath = fileList[random(fileList.length - 1)]
+  log('获取图片', imagePath)
   return fs.readFileSync(imagePath)
 }
