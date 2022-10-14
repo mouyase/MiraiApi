@@ -2,6 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import fs, { mkdirSync } from 'fs'
 import cache from '../../../../libs/cache'
 import { log } from '../../../../libs/util/log'
+import { run } from 'node:test'
+import { DirectoryStructure } from '../../../../libs/common/type'
 
 const path = require('path').resolve('./images')
 
@@ -32,6 +34,33 @@ ${text}
 </html>
 `
 
+const getDirectoryStructure = (
+  item: DirectoryStructure
+): DirectoryStructure => {
+  const path = item.path
+  return {
+    ...item,
+    children: fs
+      .readdirSync(item.path)
+      .filter(item => fs.statSync(`${path}/${item}`).isDirectory())
+      .map(item => ({ name: item, path: `${path}/${item}` }))
+      .map(item => getDirectoryStructure(item)),
+    files: fs
+      .readdirSync(item.path)
+      .filter(item => fs.statSync(`${path}/${item}`).isFile())
+      .map(item => `${path}/${item}`)
+      .filter(
+        item =>
+          item.toLowerCase().endsWith('.jpg') ||
+          item.toLowerCase().endsWith('.jpeg') ||
+          item.toLowerCase().endsWith('.png') ||
+          item.toLowerCase().endsWith('.bmp') ||
+          item.toLowerCase().endsWith('.gif') ||
+          item.toLowerCase().endsWith('.webp')
+      )
+  }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -40,41 +69,14 @@ export default async function handler(
     if (fs.existsSync(path)) {
       const pathStat = fs.statSync(path)
       if (pathStat.isDirectory()) {
-        const pathList = fs
-          .readdirSync(path)
-          .filter(item => fs.statSync(`${path}/${item}`)?.isDirectory())
-          .map(item => ({ year: item, path: `${path}/${item}` }))
-          .filter(item => fs.statSync(item.path)?.isDirectory())
-          .map(item => {
-            /** 遍历年目录，获取月目录地址 */
-            const path = item.path
-            return {
-              ...item,
-              items: fs
-                .readdirSync(item.path)
-                .filter(item => fs.statSync(`${path}/${item}`)?.isDirectory())
-                .map(item => ({ month: item, path: `${path}/${item}` }))
-                .filter(item => fs.statSync(item.path)?.isDirectory())
-                .map(item => {
-                  /** 遍历月目录，获取图片文件地址 */
-                  const path = item.path
-                  return {
-                    ...item,
-                    items: fs
-                      .readdirSync(path)
-                      .filter(item => fs.statSync(`${path}/${item}`)?.isFile())
-                      .map(item => `${path}/${item}`)
-                  }
-                })
-            }
-          })
+        const directoryStructure = getDirectoryStructure({ name: '/', path })
         fs.writeFileSync(
           `${path}/index.json`,
-          JSON.stringify(pathList),
+          JSON.stringify(directoryStructure),
           'utf-8'
         )
         log('刷新完成')
-        await cache.set('fileIndex', pathList)
+        await cache.set('fileIndex', directoryStructure)
         log('写入缓存')
         res.status(200).send(html('Fresh OK'))
       }
