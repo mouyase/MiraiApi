@@ -2,9 +2,11 @@ version: "3"
 services:
   mirai-api:
     image: mirai-api
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     ports:
       - "3000:3000"
     volumes:
       - ./images:/app/images
-    privileged: true
