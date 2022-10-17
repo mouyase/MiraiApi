@@ -11,7 +11,7 @@ async function getRefererList() {
   } else {
     const folder = require('path').resolve('./config')
     const path = require('path').resolve(`${folder}/referer.conf`)
-    let refererList = []
+    let refererList: string[] = []
     let refererConfig = ''
     if (fs.existsSync(folder)) {
       const pathStat = fs.statSync(folder)
@@ -29,7 +29,7 @@ async function getRefererList() {
       fs.writeFileSync(path, JSON.stringify([]), 'utf-8')
     }
     try {
-      refererList = JSON.parse(refererConfig)
+      refererList = refererConfig.trim().split(/\n/)
       await cache.set('refererList', refererList)
       log('写入缓存', 'refererList')
     } catch (e) {
