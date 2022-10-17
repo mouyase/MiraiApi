@@ -3,35 +3,9 @@ import fs from 'fs'
 import cache from '../../../../libs/cache'
 import { log } from '../../../../libs/util/log'
 import { DirectoryStructure } from '../../../../libs/common/type'
+import { err, html } from '../../../../libs/common/body'
 
 const path = require('path').resolve('./images')
-
-const html = (text: string) => `
-<html>
-<head></head>
-<body>
-<h1 style="text-align: center">${text}</h1>
-<hr>
-<div style="text-align: center">MiraiApi - Mikusa Random Image Api</div>
-</body>
-</html>
-`
-const err = (text: string) => `
-<html>
-<head></head>
-<body>
-<h1 style="text-align: center">Error</h1>
-<hr>
-<pre>
-<code>
-${text}
-</code>
-</pre>
-<hr>
-<div style="text-align: center">MiraiApi - Mikusa Random Image Api</div>
-</body>
-</html>
-`
 
 const getDirectoryStructure = (
   item: DirectoryStructure
@@ -76,13 +50,14 @@ export default async function handler(
         )
         log('刷新完成')
         await cache.set('fileIndex', directoryStructure)
-        log('写入缓存')
+        log('写入缓存', 'fileIndex')
         res.status(200).send(html('Fresh OK'))
       }
     } else {
       fs.mkdirSync(path)
     }
   } catch (e) {
+    log('出现错误', JSON.stringify(e))
     res.status(500).send(err(JSON.stringify(e)))
   }
 }
