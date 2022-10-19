@@ -3,8 +3,7 @@ import { log } from '../util/log'
 import fs from 'fs'
 
 async function getRefererList() {
-  // const cacheData = await cache.get('refererList')
-  const cacheData = false
+  const cacheData = await cache.get('refererList')
   if (cacheData) {
     log('命中缓存', 'refererList')
     return cacheData
@@ -41,13 +40,19 @@ async function getRefererList() {
 
 export default async function getPermission(referer: string) {
   const refererList = await getRefererList()
-  const refererUrl = new URL(referer)
-  const { host } = refererUrl
-  return refererList.some((item: string) => {
-    let whiteHost = item
-    if (item.startsWith('*.')) {
-      whiteHost = whiteHost.replace('*.', '')
-    }
-    return host.endsWith(whiteHost)
-  })
+  if (referer) {
+    const refererUrl = new URL(referer)
+    console.log(refererUrl)
+    const { host } = refererUrl
+    console.log(host)
+    return refererList.some((item: string) => {
+      let whiteHost = item
+      if (item.startsWith('*.')) {
+        whiteHost = whiteHost.replace('*.', '')
+      }
+      return host.endsWith(whiteHost)
+    })
+  } else {
+    return true
+  }
 }
