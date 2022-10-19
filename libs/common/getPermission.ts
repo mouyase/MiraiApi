@@ -25,7 +25,7 @@ async function getRefererList() {
       refererConfig = fs.readFileSync(path, 'utf-8')
     } catch (e) {
       log('出现错误', JSON.stringify(e))
-      fs.writeFileSync(path, JSON.stringify([]), 'utf-8')
+      fs.writeFileSync(path, '', 'utf-8')
     }
     try {
       refererList = refererConfig.trim().split(/\n/)
