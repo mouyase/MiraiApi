@@ -21,3 +21,7 @@ cd MiraiApi
 ```
 docker compose up -d
 ```
+
+## 说明
+
+Api目前还十分简陋，随心情更新。~~能用就行~~
