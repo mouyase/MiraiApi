@@ -17,3 +17,7 @@ git clone https://github.com/mouyase/MiraiApi.git
 cd MiraiApi
 ```
 
+适当修改`docker-compose.yml`文件中的配置，随后启动
+```
+docker compose up -d
+```
